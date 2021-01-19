@@ -7,9 +7,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server --mode development --open --hot --port=3000",
     "build": "webpack --mode production",
-    "prettier": "prettier --write --config ./.prettierrc \"**/*.{ts,tsx,js,jsx}\"",
-    "lint": "eslint './src/**/*.{ts,tsx,js,jsx}'",
-    "lint:fix": "eslint --fix './src/**/*.{ts,tsx,js,jsx}'"
+    "checkTs": "tsc --noEmit",
+    "eslint": "eslint --ext js,jsx,ts,tsx",
+    "lint": "npm run eslint -- src",
+    "lint:fix": "npm run eslint -- --fix src",
+    "prettify": "prettier --write"
   },
   "keywords": [],
   "author": "",
@@ -55,8 +57,8 @@
     "styled-components": "^5.2.1"
   },
   "lint-staged": {
-    "*.{ts,js}": [
-      "npm run eslint"
+    "*.{ts,tsx,js,jsx}": [
+      "npm run lint"
     ],
     "*.json": [
       "npm run prettify"
