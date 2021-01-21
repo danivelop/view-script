@@ -1,5 +1,5 @@
 /* External dependencies */
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useCallback, useEffect, useRef } from 'react'
 import _ from 'lodash'
 
 /* Internal dependencies */
@@ -19,21 +19,26 @@ function Description() {
 	)
 	const [propertyValue, setPropertyValue] = useState<any>()
 
+	const layoutRef = useRef()
+
 	const handleClickProperty = useCallback((property: EventPropertyType) => {
 		setCurrentProperty(property)
 	}, [])
 
-	const handleUpdate = useCallback(
-		(element: any) => {
-			const value = getEventPropertyValue(element, currentProperty.property)
-			setPropertyValue(value)
-		},
-		[currentProperty.property]
-	)
+	const handleUpdate = useCallback(() => {
+		const value = getEventPropertyValue(currentProperty.property, layoutRef)
+		setPropertyValue(value)
+	}, [currentProperty.property])
+
+	const handleChangeMode = useCallback(() => {
+		const value = getEventPropertyValue(currentProperty.property, layoutRef)
+		setPropertyValue(value)
+	}, [currentProperty.property])
 
 	useEffect(() => {
 		if (validPropertyValues.includes(currentProperty.property)) {
-			setPropertyValue(0)
+			const value = getEventPropertyValue(currentProperty.property, layoutRef)
+			setPropertyValue(value)
 		} else {
 			setPropertyValue(null)
 		}
@@ -63,7 +68,11 @@ function Description() {
 				</Styled.Content>
 			</Styled.Description>
 			<Styled.Layout>
-				<Layout onUpdate={handleUpdate} />
+				<Layout
+					onUpdate={handleUpdate}
+					onChangeMode={handleChangeMode}
+					ref={layoutRef}
+				/>
 			</Styled.Layout>
 		</Styled.Container>
 	)

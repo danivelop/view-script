@@ -38,16 +38,31 @@ export const eventProperties: EventPropertyType[] = [
   화면의 왼쪽 위를 기준으로 현재 스크롤 된 Y축의 값
     `,
 	},
+	{
+		property: 'window.innerWidth',
+		description: `
+	## window.innerWidth
+	화면의 viewport영역의 내부높이
+		`,
+	},
 ]
 
-export const validPropertyValues = ['window.scrollX', 'window.scrollY']
+export const validPropertyValues = [
+	'window.scrollX',
+	'window.scrollY',
+	'window.innerWidth',
+]
 
-export function getEventPropertyValue(element: any, property: string) {
+export function getEventPropertyValue(property: string, layoutRef: any) {
+	const { documentRef, windowRef } = layoutRef.current
+
 	switch (property) {
 		case 'window.scrollX':
-			return element.scrollLeft
+			return documentRef?.current && documentRef.current.scrollLeft
 		case 'window.scrollY':
-			return element.scrollTop
+			return documentRef?.current && documentRef.current.scrollTop
+		case 'window.innerWidth':
+			return windowRef?.current && windowRef.current.clientWidth
 		default:
 			return null
 	}

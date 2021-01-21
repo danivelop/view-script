@@ -41,8 +41,10 @@ export const PropertyList = styled.div`
 `
 
 export const PropertyValue = styled.div`
+	display: flex;
+	align-items: center;
+	height: 40px;
 	margin-top: 20px;
-	padding: 10px 0;
 	font-size: 24px;
 	font-weight: bolder;
 `

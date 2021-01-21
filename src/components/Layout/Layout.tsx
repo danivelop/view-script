@@ -1,5 +1,13 @@
 /* External dependencies */
-import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react'
+import React, {
+	useEffect,
+	useState,
+	useMemo,
+	useCallback,
+	useRef,
+	forwardRef,
+	useImperativeHandle,
+} from 'react'
 import _ from 'lodash'
 
 /* External dependencies */
@@ -9,7 +17,8 @@ import keyboardImage from 'images/keyboard.jpg'
 import * as Styled from './Layout.styled'
 
 interface LayoutProps {
-	onUpdate: (element: any) => void
+	onUpdate: () => void
+	onChangeMode: () => void
 }
 
 export enum Mode {
@@ -17,12 +26,12 @@ export enum Mode {
 	Mobile = 'mobile',
 }
 
-function Layout({ onUpdate }: LayoutProps) {
+function Layout({ onUpdate, onChangeMode }: LayoutProps, ref: any) {
 	const [mode, setMode] = useState(Mode.Browser)
 	const [allowMove, setAllowMove] = useState(false)
 	const [showKeyboard, setShowKeyboard] = useState(false)
 
-	const browserRef = useRef<HTMLDivElement>(null)
+	const windowRef = useRef<HTMLDivElement>(null)
 	const documentRef = useRef<HTMLDivElement>(null)
 	const initialPosition = useRef(0)
 	const browserWidth = useRef(0)
@@ -41,21 +50,21 @@ function Layout({ onUpdate }: LayoutProps) {
 			if (!allowMove) return
 
 			window.requestAnimationFrame(() => {
-				if (_.isNil(browserRef.current)) return
+				if (_.isNil(windowRef.current)) return
 
 				const willChangeWidth =
 					browserWidth.current + event.clientX - initialPosition.current
-				browserRef.current.style.width = `${willChangeWidth}px`
+				windowRef.current.style.width = `${willChangeWidth}px`
 			})
 		},
 		[allowMove]
 	)
 
 	const handleMouseUp = useCallback(() => {
-		if (_.isNil(browserRef.current)) return
+		if (_.isNil(windowRef.current)) return
 
 		initialPosition.current = 0
-		browserWidth.current = browserRef.current.clientWidth
+		browserWidth.current = windowRef.current.clientWidth
 		setAllowMove(false)
 	}, [])
 
@@ -70,9 +79,7 @@ function Layout({ onUpdate }: LayoutProps) {
 	const handleScroll = useMemo(
 		() =>
 			_.throttle(() => {
-				if (!_.isNil(documentRef.current)) {
-					onUpdate(documentRef.current)
-				}
+				onUpdate()
 			}, 50),
 		[onUpdate]
 	)
@@ -94,7 +101,7 @@ function Layout({ onUpdate }: LayoutProps) {
 		() =>
 			mode === Mode.Browser ? (
 				<Styled.BrowserWrapper>
-					<Styled.Browser ref={browserRef}>
+					<Styled.Browser ref={windowRef}>
 						<Styled.BrowserBackground src={browserImage} />
 						<Styled.BrowserContent>{documentComponent}</Styled.BrowserContent>
 					</Styled.Browser>
@@ -103,7 +110,7 @@ function Layout({ onUpdate }: LayoutProps) {
 			) : (
 				<Styled.Mobile>
 					<Styled.MobileBackground src={mobileImage} />
-					<Styled.MobileContent>
+					<Styled.MobileContent ref={windowRef}>
 						{documentComponent}
 						{showKeyboard && (
 							<Styled.KeyboardWrapper>
@@ -129,10 +136,14 @@ function Layout({ onUpdate }: LayoutProps) {
 	)
 
 	useEffect(() => {
-		if (_.isNil(browserRef.current)) return
+		if (_.isNil(windowRef.current)) return
 
-		browserWidth.current = browserRef.current.clientWidth
+		browserWidth.current = windowRef.current.clientWidth
 	}, [mode])
+
+	useEffect(() => {
+		onChangeMode()
+	}, [mode, onChangeMode])
 
 	useEffect(() => {
 		document.addEventListener('mousemove', handleMouseMove)
@@ -143,6 +154,11 @@ function Layout({ onUpdate }: LayoutProps) {
 			document.removeEventListener('mouseup', handleMouseUp)
 		}
 	}, [handleMouseMove, handleMouseUp])
+
+	useImperativeHandle(ref, () => ({
+		documentRef,
+		windowRef,
+	}))
 
 	return (
 		<Styled.Container>
@@ -167,4 +183,4 @@ function Layout({ onUpdate }: LayoutProps) {
 	)
 }
 
-export default Layout
+export default forwardRef(Layout)
