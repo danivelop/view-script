@@ -1,8 +1,15 @@
 /* External dependencies */
 import styled, { css } from 'styled-components'
 
+/* Internal dependencies */
+import { Mode } from 'components/Layout'
+
 interface ButtonProps {
 	active: boolean
+}
+
+interface InnerDocumentProps {
+	mode: Mode
 }
 
 export const Container = styled.div`
@@ -55,19 +62,19 @@ export const ResizeBar = styled.div`
 	cursor: col-resize;
 `
 
-export const Phone = styled.div`
+export const Mobile = styled.div`
 	width: 306px;
 	height: 580px;
 	position: relative;
 	overflow: hidden;
 `
 
-export const PhoneBackground = styled.img`
+export const MobileBackground = styled.img`
 	width: 680px;
 	transform: translate(-186px, -50px);
 `
 
-export const PhoneContent = styled.div`
+export const MobileContent = styled.div`
 	display: flex;
 	flex-direction: column;
 	width: 271px;
@@ -101,9 +108,12 @@ export const Keyboard = styled.img`
 `
 
 export const Document = styled.div`
-	width: 100%;
 	flex: 1;
-	overflow-y: auto;
+	overflow: auto;
+`
+
+export const InnerDocument = styled.div<InnerDocumentProps>`
+	width: ${({ mode }) => (mode === Mode.Browser ? '1050' : '405')}px;
 	padding: 10px 20px;
 	box-sizing: border-box;
 `

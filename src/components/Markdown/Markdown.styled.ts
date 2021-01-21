@@ -2,9 +2,7 @@
 import styled from 'styled-components'
 
 export const Container = styled.div`
-	width: 700px;
-	margin: 0 auto;
-	padding: 50px 0;
+	width: 100%;
 `
 
 export const InlineCode = styled.code`

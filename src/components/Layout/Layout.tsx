@@ -4,21 +4,26 @@ import _ from 'lodash'
 
 /* External dependencies */
 import browserImage from 'images/browser.jpg'
-import phoneImage from 'images/phone.jpg'
+import mobileImage from 'images/mobile.jpg'
 import keyboardImage from 'images/keyboard.jpg'
 import * as Styled from './Layout.styled'
 
-enum Mode {
-	Browser = 'browser',
-	Phone = 'phone',
+interface LayoutProps {
+	onUpdate: (element: any) => void
 }
 
-function Layout() {
-	const [mode, setMode] = useState(Mode.Phone)
+export enum Mode {
+	Browser = 'browser',
+	Mobile = 'mobile',
+}
+
+function Layout({ onUpdate }: LayoutProps) {
+	const [mode, setMode] = useState(Mode.Browser)
 	const [allowMove, setAllowMove] = useState(false)
 	const [showKeyboard, setShowKeyboard] = useState(false)
 
 	const browserRef = useRef<HTMLDivElement>(null)
+	const documentRef = useRef<HTMLDivElement>(null)
 	const initialPosition = useRef(0)
 	const browserWidth = useRef(0)
 
@@ -38,7 +43,8 @@ function Layout() {
 			window.requestAnimationFrame(() => {
 				if (_.isNil(browserRef.current)) return
 
-				const willChangeWidth = browserWidth.current + event.clientX - initialPosition.current
+				const willChangeWidth =
+					browserWidth.current + event.clientX - initialPosition.current
 				browserRef.current.style.width = `${willChangeWidth}px`
 			})
 		},
@@ -61,15 +67,27 @@ function Layout() {
 		setShowKeyboard(false)
 	}, [])
 
+	const handleScroll = useMemo(
+		() =>
+			_.throttle(() => {
+				if (!_.isNil(documentRef.current)) {
+					onUpdate(documentRef.current)
+				}
+			}, 50),
+		[onUpdate]
+	)
+
 	const documentComponent = useMemo(
 		() => (
-			<Styled.Document>
-				{Array.from({ length: 100 }, () => 0).map((_, index) => (
-					<Styled.Item key={index} />
-				))}
+			<Styled.Document ref={documentRef} onScroll={handleScroll}>
+				<Styled.InnerDocument mode={mode}>
+					{Array.from({ length: 100 }, () => 0).map((_, index) => (
+						<Styled.Item key={index} />
+					))}
+				</Styled.InnerDocument>
 			</Styled.Document>
 		),
-		[]
+		[handleScroll, mode]
 	)
 
 	const layoutComponent = useMemo(
@@ -83,20 +101,31 @@ function Layout() {
 					<Styled.ResizeBar onMouseDown={handleMouseDown} />
 				</Styled.BrowserWrapper>
 			) : (
-				<Styled.Phone>
-					<Styled.PhoneBackground src={phoneImage} />
-					<Styled.PhoneContent>
+				<Styled.Mobile>
+					<Styled.MobileBackground src={mobileImage} />
+					<Styled.MobileContent>
 						{documentComponent}
 						{showKeyboard && (
 							<Styled.KeyboardWrapper>
 								<Styled.Keyboard src={keyboardImage} />
 							</Styled.KeyboardWrapper>
 						)}
-					</Styled.PhoneContent>
-					<Styled.Input placeholder="텍스트 입력" onFocus={handleFocus} onBlur={handleBlur} />
-				</Styled.Phone>
+					</Styled.MobileContent>
+					<Styled.Input
+						placeholder="텍스트 입력"
+						onFocus={handleFocus}
+						onBlur={handleBlur}
+					/>
+				</Styled.Mobile>
 			),
-		[mode, showKeyboard, documentComponent, handleMouseDown, handleFocus, handleBlur]
+		[
+			mode,
+			showKeyboard,
+			documentComponent,
+			handleMouseDown,
+			handleFocus,
+			handleBlur,
+		]
 	)
 
 	useEffect(() => {
@@ -119,11 +148,19 @@ function Layout() {
 		<Styled.Container>
 			{layoutComponent}
 			<Styled.ButtonWrapper>
-				<Styled.Button data-mode={Mode.Browser} active={mode === Mode.Browser} onClick={handleChangeMode}>
+				<Styled.Button
+					data-mode={Mode.Browser}
+					active={mode === Mode.Browser}
+					onClick={handleChangeMode}
+				>
 					Browser
 				</Styled.Button>
-				<Styled.Button data-mode={Mode.Phone} active={mode === Mode.Phone} onClick={handleChangeMode}>
-					Phone
+				<Styled.Button
+					data-mode={Mode.Mobile}
+					active={mode === Mode.Mobile}
+					onClick={handleChangeMode}
+				>
+					Mobile
 				</Styled.Button>
 			</Styled.ButtonWrapper>
 		</Styled.Container>

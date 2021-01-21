@@ -2,10 +2,10 @@
 import React from 'react'
 
 /* Internal dependencies */
-import Description from 'components/Description'
+import Container from 'components/Container'
 
 function MainPage() {
-	return <Description />
+	return <Container />
 }
 
 export default MainPage
