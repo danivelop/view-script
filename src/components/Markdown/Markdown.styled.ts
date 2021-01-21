@@ -25,3 +25,13 @@ export const Blockquote = styled.blockquote`
 	color: #6a737d;
 	border-left: 0.25em solid #dfe2e5;
 `
+
+export const Code = styled.pre`
+	padding: 8px 12px;
+	background-color: rgba(27, 31, 35, 0.1);
+	border-radius: 8px;
+`
+
+export const CodeIn = styled.code`
+	background-color: transparent;
+`

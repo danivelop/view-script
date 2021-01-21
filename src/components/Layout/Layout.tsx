@@ -18,7 +18,6 @@ import * as Styled from './Layout.styled'
 
 interface LayoutProps {
 	onUpdate: () => void
-	onChangeMode: () => void
 }
 
 export enum Mode {
@@ -26,7 +25,7 @@ export enum Mode {
 	Mobile = 'mobile',
 }
 
-function Layout({ onUpdate, onChangeMode }: LayoutProps, ref: any) {
+function Layout({ onUpdate }: LayoutProps, ref: any) {
 	const [mode, setMode] = useState(Mode.Browser)
 	const [allowMove, setAllowMove] = useState(false)
 	const [showKeyboard, setShowKeyboard] = useState(false)
@@ -55,9 +54,10 @@ function Layout({ onUpdate, onChangeMode }: LayoutProps, ref: any) {
 				const willChangeWidth =
 					browserWidth.current + event.clientX - initialPosition.current
 				windowRef.current.style.width = `${willChangeWidth}px`
+				onUpdate()
 			})
 		},
-		[allowMove]
+		[allowMove, onUpdate]
 	)
 
 	const handleMouseUp = useCallback(() => {
@@ -142,8 +142,8 @@ function Layout({ onUpdate, onChangeMode }: LayoutProps, ref: any) {
 	}, [mode])
 
 	useEffect(() => {
-		onChangeMode()
-	}, [mode, onChangeMode])
+		onUpdate()
+	}, [mode, showKeyboard, onUpdate])
 
 	useEffect(() => {
 		document.addEventListener('mousemove', handleMouseMove)

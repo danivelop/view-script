@@ -6,7 +6,6 @@ import _ from 'lodash'
 import {
 	EventPropertyType,
 	eventProperties,
-	validPropertyValues,
 	getEventPropertyValue,
 } from 'constants/EventProperty'
 import Layout from 'components/Layout'
@@ -30,18 +29,9 @@ function Description() {
 		setPropertyValue(value)
 	}, [currentProperty.property])
 
-	const handleChangeMode = useCallback(() => {
+	useEffect(() => {
 		const value = getEventPropertyValue(currentProperty.property, layoutRef)
 		setPropertyValue(value)
-	}, [currentProperty.property])
-
-	useEffect(() => {
-		if (validPropertyValues.includes(currentProperty.property)) {
-			const value = getEventPropertyValue(currentProperty.property, layoutRef)
-			setPropertyValue(value)
-		} else {
-			setPropertyValue(null)
-		}
 	}, [currentProperty.property])
 
 	return (
@@ -70,7 +60,6 @@ function Description() {
 			<Styled.Layout>
 				<Layout
 					onUpdate={handleUpdate}
-					onChangeMode={handleChangeMode}
 					ref={layoutRef}
 				/>
 			</Styled.Layout>

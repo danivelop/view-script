@@ -28,6 +28,11 @@ const renderers = {
 	blockquote: ({ children }: RendererProps) => (
 		<Styled.Blockquote>{children}</Styled.Blockquote>
 	),
+	code: ({ value }: RendererProps) => (
+		<Styled.Code>
+			<Styled.CodeIn>{value}</Styled.CodeIn>
+		</Styled.Code>
+	),
 }
 
 function Markdown({ markdown }: MarkdownProps) {

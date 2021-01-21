@@ -20,6 +20,8 @@ export const Description = styled.div`
 export const Property = styled.div<PropertyProps>`
 	padding: 5px 10px;
 	background-color: #f5f5f5;
+	word-break: keep-all;
+	white-space: nowrap;
 	border: 1px solid #c3c3c3;
 	border-radius: 6px;
 	cursor: pointer;
@@ -33,7 +35,8 @@ export const Property = styled.div<PropertyProps>`
 
 export const PropertyList = styled.div`
 	display: flex;
-	width: 600px;
+	width: 700px;
+	overflow-x: scroll;
 
 	${Property} + ${Property} {
 		margin-left: 10px;
