@@ -23,6 +23,7 @@ interface LayoutProps {
 export enum Mode {
 	Browser = 'browser',
 	Mobile = 'mobile',
+	None = 'none',
 }
 
 function Layout({ onUpdate }: LayoutProps, ref: any) {
@@ -32,6 +33,7 @@ function Layout({ onUpdate }: LayoutProps, ref: any) {
 
 	const windowRef = useRef<HTMLDivElement>(null)
 	const documentRef = useRef<HTMLDivElement>(null)
+	const elementRef = useRef<HTMLDivElement>(null)
 	const initialPosition = useRef(0)
 	const browserWidth = useRef(0)
 
@@ -88,18 +90,21 @@ function Layout({ onUpdate }: LayoutProps, ref: any) {
 		() => (
 			<Styled.Document ref={documentRef} onScroll={handleScroll}>
 				<Styled.InnerDocument mode={mode}>
-					{Array.from({ length: 100 }, () => 0).map((_, index) => (
-						<Styled.Item key={index} />
-					))}
+					{Array.from({ length: 100 }, () => 0).map((_, index) => {
+						if (index === 4) {
+							return <Styled.Item key={index} ref={elementRef} active />
+						}
+						return <Styled.Item key={index} />
+					})}
 				</Styled.InnerDocument>
 			</Styled.Document>
 		),
 		[handleScroll, mode]
 	)
 
-	const layoutComponent = useMemo(
-		() =>
-			mode === Mode.Browser ? (
+	const layoutComponent = useMemo(() => {
+		if (mode === Mode.Browser) {
+			return (
 				<Styled.BrowserWrapper>
 					<Styled.Browser ref={windowRef}>
 						<Styled.BrowserBackground src={browserImage} />
@@ -107,7 +112,10 @@ function Layout({ onUpdate }: LayoutProps, ref: any) {
 					</Styled.Browser>
 					<Styled.ResizeBar onMouseDown={handleMouseDown} />
 				</Styled.BrowserWrapper>
-			) : (
+			)
+		}
+		if (mode === Mode.Mobile) {
+			return (
 				<Styled.Mobile>
 					<Styled.MobileBackground src={mobileImage} />
 					<Styled.MobileContent ref={windowRef}>
@@ -124,16 +132,17 @@ function Layout({ onUpdate }: LayoutProps, ref: any) {
 						onBlur={handleBlur}
 					/>
 				</Styled.Mobile>
-			),
-		[
-			mode,
-			showKeyboard,
-			documentComponent,
-			handleMouseDown,
-			handleFocus,
-			handleBlur,
-		]
-	)
+			)
+		}
+		return <Styled.None>{documentComponent}</Styled.None>
+	}, [
+		mode,
+		showKeyboard,
+		documentComponent,
+		handleMouseDown,
+		handleFocus,
+		handleBlur,
+	])
 
 	useEffect(() => {
 		if (_.isNil(windowRef.current)) return
@@ -158,6 +167,7 @@ function Layout({ onUpdate }: LayoutProps, ref: any) {
 	useImperativeHandle(ref, () => ({
 		documentRef,
 		windowRef,
+		elementRef,
 	}))
 
 	return (
@@ -177,6 +187,13 @@ function Layout({ onUpdate }: LayoutProps, ref: any) {
 					onClick={handleChangeMode}
 				>
 					Mobile
+				</Styled.Button>
+				<Styled.Button
+					data-mode={Mode.None}
+					active={mode === Mode.None}
+					onClick={handleChangeMode}
+				>
+					None
 				</Styled.Button>
 			</Styled.ButtonWrapper>
 		</Styled.Container>

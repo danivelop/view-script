@@ -38,5 +38,18 @@ export const CodeIn = styled.code`
 
 export const Paragraph = styled.p`
 	margin: 6px 0;
-	letter-spacing: 0.8px;
+	letter-spacing: 0.5px;
+`
+
+export const Link = styled.a`
+	color: #0366d6;
+	text-decoration: none;
+`
+
+export const List = styled.li`
+	margin: 5px 0;
+`
+
+export const TableCell = styled.td`
+	padding: 5px 8px;
 `

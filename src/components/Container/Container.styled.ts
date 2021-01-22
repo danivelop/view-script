@@ -36,6 +36,7 @@ export const Property = styled.div<PropertyProps>`
 export const PropertyList = styled.div`
 	display: flex;
 	width: 700px;
+	padding-bottom: 12px;
 	overflow-x: scroll;
 
 	${Property} + ${Property} {
@@ -45,8 +46,9 @@ export const PropertyList = styled.div`
 
 export const PropertyValue = styled.div`
 	display: flex;
-	align-items: center;
-	height: 40px;
+	flex-direction: column;
+	justify-content: center;
+	min-height: 40px;
 	margin-top: 20px;
 	font-size: 24px;
 	font-weight: bolder;

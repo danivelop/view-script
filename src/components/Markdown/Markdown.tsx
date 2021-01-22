@@ -15,6 +15,7 @@ interface RendererProps {
 	level: 1 | 2 | 3 | 4 | 5 | 6
 	value: string
 	children: React.ReactChildren
+	href: string
 }
 
 const renderers = {
@@ -35,6 +36,17 @@ const renderers = {
 	),
 	paragraph: ({ children }: RendererProps) => (
 		<Styled.Paragraph>{children}</Styled.Paragraph>
+	),
+	link: ({ children, href }: RendererProps) => (
+		<Styled.Link href={href} target="_blank" rel="noopener noreferrer">
+			{children}
+		</Styled.Link>
+	),
+	listItem: ({ children }: RendererProps) => (
+		<Styled.List>{children}</Styled.List>
+	),
+	tableCell: ({ children }: RendererProps) => (
+		<Styled.TableCell>{children}</Styled.TableCell>
 	),
 }
 

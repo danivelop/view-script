@@ -12,6 +12,10 @@ interface InnerDocumentProps {
 	mode: Mode
 }
 
+interface ItemProps {
+	active?: boolean
+}
+
 export const Container = styled.div`
 	display: flex;
 	flex-direction: column;
@@ -107,32 +111,40 @@ export const Keyboard = styled.img`
 	width: 100%;
 `
 
+export const None = styled.div`
+	display: flex;
+	flex-direction: column;
+	width: 300px;
+	height: 400px;
+	overflow: hidden;
+	box-sizing: border-box;
+	border: 2px solid #c4c4c4;
+`
+
 export const Document = styled.div`
 	flex: 1;
 	overflow: auto;
 `
 
 export const InnerDocument = styled.div<InnerDocumentProps>`
+	position: relative;
 	width: ${({ mode }) => (mode === Mode.Browser ? '1050' : '405')}px;
 	padding: 10px 20px;
 	box-sizing: border-box;
 `
 
-export const Item = styled.div`
+export const Item = styled.div<ItemProps>`
 	width: 100%;
 	height: 40px;
 	margin-bottom: 10px;
 	background-color: #f2f2f2;
 	border-radius: 8px;
-`
 
-export const ButtonWrapper = styled.div`
-	display: flex;
-	position: absolute;
-	bottom: 0;
-	margin-top: 20px;
-	border: 1px solid #cacaca;
-	border-radius: 6px;
+	${({ active }) =>
+		active &&
+		css`
+			background-color: #eb5757;
+		`}
 `
 
 export const Button = styled.div<ButtonProps>`
@@ -145,4 +157,17 @@ export const Button = styled.div<ButtonProps>`
 		css`
 			background-color: #dcdcdc;
 		`}
+`
+
+export const ButtonWrapper = styled.div`
+	display: flex;
+	position: absolute;
+	bottom: 0;
+	margin-top: 20px;
+	border: 1px solid #cacaca;
+	border-radius: 6px;
+
+	${Button} + ${Button} {
+		border-left: 1px solid #cacaca;
+	}
 `

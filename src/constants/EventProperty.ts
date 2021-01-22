@@ -25,16 +25,13 @@ window객체는 아래와 같은 구성요소를 가집니다
     `,
 	},
 	{
-		property: 'viewport',
-		description: ``,
-	},
-	{
 		property: 'window.scrollX',
 		description: `
 ## window.scrollX
-화면의 왼쪽 위를 기준으로 현재 문서(documentElement)가 스크롤 된 X축의 값.
-
+화면의 왼쪽 위를 기준으로 현재 **문서**가 스크롤 된 X축의 값.
 \`window.pageXOffset\`의 별칭으로 \`window.scrollX === window.pageXOffset\`는 항상 \`true\`
+
+> 여기서 말하는 \`문서\`는 브라우저의 모드에 따라 다름. 뒤에서 설명
 
 > IE에서는 지원을 하지 않으므로 IE에서는 \`window.pageXOffset\`를 사용해야함. IE9 미만에서는 \`window.pageXOffset\`도 동작안함.
     `,
@@ -43,9 +40,10 @@ window객체는 아래와 같은 구성요소를 가집니다
 		property: 'window.scrollY',
 		description: `
 ## window.scrollY
-화면의 왼쪽 위를 기준으로 현재 문서(documentElement)가 스크롤 된 Y축의 값
-
+화면의 왼쪽 위를 기준으로 현재 **문서**가 스크롤 된 Y축의 값
 \`window.pageYOffset\`의 별칭으로 \`window.scrollY === window.pageYOffset\`는 항상 \`true\`
+
+> 여기서 말하는 \`문서\`는 브라우저의 모드에 따라 다름. 뒤에서 설명
 
 > IE에서는 지원을 하지 않으므로 IE에서는 \`window.pageYOffset\`를 사용해야함. IE9 미만에서는 \`window.pageYOffset\`도 동작안함.
     `,
@@ -196,10 +194,150 @@ W3C에서 웹표준을 제정할 당시, 기존에 있던 웹사이트들은 해
 [포준모드 및 호환모드에 대한 아주 자세한 문서](https://hsivonen.fi/doctype/)
 		`,
 	},
+	{
+		property: 'element.scrollLeft',
+		description: `
+## element.scrollLeft
+
+element가 해당 element의 왼쪽 위를 기준으로 스크롤된 픽셀단위의 X좌표값.
+
+해당 element가 스크롤이 불가능한 요소라면 0을 리턴함
+
+---
+
+number값을 넣어 해당 element의 스크롤을 이동시킬 수 있음
+
+ex)
+\`\`\`javascript
+element.scrollLeft = number
+\`\`\`
+		`,
+	},
+	{
+		property: 'element.scrollTop',
+		description: `
+## element.scrollTop
+
+element가 해당 element의 왼쪽 위를 기준으로 스크롤된 픽셀단위의 Y좌표값.
+
+해당 element가 스크롤이 불가능한 요소라면 0을 리턴함
+
+---
+
+number값을 넣어 해당 element의 스크롤을 이동시킬 수 있음
+
+ex)
+\`\`\`javascript
+element.scrollTop = number
+\`\`\`
+		`,
+	},
+	{
+		property: 'element.scrollHeight',
+		description: `
+## element.scrollHeight
+
+scroll영역을 합친 element의 높이
+		`,
+	},
+	{
+		property: 'element.clientWidth',
+		description: `
+## element.clientWidth
+
+element의 스크롤바, border, margin영역을 제외한 너비
+
+![clientWidth](https://developer.mozilla.org/en-US/docs/Web/API/Element/clientWidth/dimensions-client.png)
+		`,
+	},
+	{
+		property: 'element.clientHeight',
+		description: `
+## element.clientHeight
+
+element의 border, margin영역을 제외한 높이
+
+![clientHeight](https://developer.mozilla.org/en-US/docs/Web/API/Element/clientWidth/dimensions-client.png)
+		`,
+	},
+	{
+		property: '절대좌표와 상대좌표',
+		description: `
+## 절대좌표와 상대좌표
+
+### 상대좌표
+
+상대좌표에 관련된 속성
+1. \`element.offsetLeft\`, \`element.offsetTop\`
+2. \`element.getBoundingClientRect()\`
+	- \`width\`, \`height\`, \`top\`, \`left\`, \`right\`, \`bottom\`
+
+---
+	
+- \`element.offsetLeft\` \`element.offsetTop\`
+position이 \`relative\`인 부모중 가장 가까운 부모를 기준으로 한 상대좌표를 나타낸다
+
+부모 element중 \`relative\`인것을 찾는데 만약 부모 element가 전부 \`relative\`가 \
+아니라면 결국 문서의 시작지점 으로부터의 좌표 즉, 절대좌표를 나타내게 된다.
+
+---
+
+\`element.getBoundingClientRect()\`
+
+- \`top\`, \`left\`, \`right\`, \`bottom\`
+viewport를 기준으로한 좌표값을 나타낸다
+
+- \`width\`, \`height\`
+element의 크기를 나타낸다. element.clientWidth 등과 다른점은 border영역을 포함하며 소수점까지 계산이 된다.
+
+### 절대좌표
+
+element의 문서에 대한 절대좌표는 스크롤영역과 해당 element의 viewport기준 상대좌표로 구할수 있다
+\`\`\`javascript
+const absoluteLeft = window.pageXOffset + element.getBoundingClientRect().left
+const absoluteTop = window.pageYOffset + element.getBoundingClientRect().top
+\`\`\`
+
+> offset관련 속성은 호출시 정확한 값을 계산하기 위해 dom전체를 reflow하기 때문에 주의해서 사용!
+		`,
+	},
+	{
+		property: 'IntersectionObserver',
+		description: `
+## IntersectionObserver
+
+viewport와 element를 관찰하며 element가 화면에서 영역 바깥으로 벗어나거나 다시 화면으로 들어오는 등의 시점을 구별할 수 있다.
+
+\`new IntersectionObserver(callback[, options])\`
+
+### option
+
+|name|type|description|
+|--|--|--|
+|root|HTMlElement|해당 root를 기준으로 경계선을 관찰한다|
+|rootMargin|string|root element의 경계선에 margin을 넣을수 있다. css와 방식은 동일|
+|threshold|number|0.0 ~ 1.0 값. 0.0은 대상 element가 단일 픽셀이라도 보일때 callback실행하고 1.0은 대상 element 전체가 대상요소가 됨|
+
+
+### code example
+\`\`\`javascript
+function callback([entry]) {
+  entry.isIntersecting // true: 화면영역에 있음, false: 화면영역을 벗어남
+}
+
+const observer = new IntersectionObserver(callback, {
+  threshold: 0.0
+})
+
+observer.observe(element)
+//observer.disconnect()  // 더 이상 필요없을때 연결해제 필요
+\`\`\`
+		`,
+	},
 ]
 
 export function getEventPropertyValue(property: string, layoutRef: any) {
-	const { documentRef, windowRef } = layoutRef.current
+	const { documentRef, windowRef, elementRef } = layoutRef.current
 
 	switch (property) {
 		case 'window.scrollX':
@@ -226,6 +364,43 @@ export function getEventPropertyValue(property: string, layoutRef: any) {
 			return document.documentElement.tagName
 		case 'document.scrollingElement':
 			return document.scrollingElement?.tagName
+		case 'element.scrollLeft':
+			return documentRef?.current && documentRef.current.scrollLeft
+		case 'element.scrollTop':
+			return documentRef?.current && documentRef.current.scrollTop
+		case 'element.scrollHeight':
+			return documentRef?.current && documentRef.current.scrollHeight
+		case '절대좌표와 상대좌표':
+			if (!elementRef.current || !documentRef.current) {
+				return null
+			}
+
+			return [
+				`element.offsetLeft: ${elementRef.current.offsetLeft}`,
+				`element.offsetTop: ${elementRef.current.offsetTop}`,
+				`element.getBoundingClientRect().width: ${
+					elementRef.current.getBoundingClientRect().width
+				}`,
+				`element.getBoundingClientRect().height: ${
+					elementRef.current.getBoundingClientRect().height
+				}`,
+				`element.getBoundingClientRect().top: ${
+					elementRef.current.getBoundingClientRect().top -
+					documentRef.current.getBoundingClientRect().top
+				}`,
+				`element.getBoundingClientRect().left: ${
+					elementRef.current.getBoundingClientRect().left -
+					documentRef.current.getBoundingClientRect().left
+				}`,
+				`element.getBoundingClientRect().right: ${
+					elementRef.current.getBoundingClientRect().right -
+					documentRef.current.getBoundingClientRect().left
+				}`,
+				`element.getBoundingClientRect().bottom: ${
+					elementRef.current.getBoundingClientRect().bottom -
+					documentRef.current.getBoundingClientRect().top
+				}`,
+			]
 		default:
 			return null
 	}

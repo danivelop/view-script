@@ -1,5 +1,5 @@
 /* External dependencies */
-import React, { useState, useCallback, useEffect, useRef } from 'react'
+import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react'
 import _ from 'lodash'
 
 /* Internal dependencies */
@@ -17,6 +17,7 @@ function Description() {
 		eventProperties[0]
 	)
 	const [propertyValue, setPropertyValue] = useState<any>()
+	const [observerValue, setObserverValue] = useState('')
 
 	const layoutRef = useRef()
 
@@ -28,6 +29,21 @@ function Description() {
 		const value = getEventPropertyValue(currentProperty.property, layoutRef)
 		setPropertyValue(value)
 	}, [currentProperty.property])
+
+	const PropertyValueComponent = useMemo(() => {
+		if (currentProperty.property === 'IntersectionObserver') {
+			return observerValue
+		}
+		if (_.isNil(propertyValue)) {
+			return null
+		}
+
+		if (!_.isArray(propertyValue)) {
+			return `${currentProperty.property}: ${propertyValue}`
+		}
+
+		return propertyValue.map((value) => <div key={value}>{value}</div>)
+	}, [currentProperty.property, observerValue, propertyValue])
 
 	useEffect(() => {
 		const value = getEventPropertyValue(currentProperty.property, layoutRef)
@@ -43,6 +59,26 @@ function Description() {
 		}
 	}, [currentProperty.property])
 
+	useEffect(() => {
+		const observer = new IntersectionObserver(
+			([entry]) => {
+				setObserverValue(entry.isIntersecting ? '나타남' : '사라짐')
+			},
+			{
+				// @ts-ignore
+				root: layoutRef.current.documentRef.current,
+				threshold: 0.0,
+			}
+		)
+
+		// @ts-ignore
+		observer.observe(layoutRef.current.elementRef.current)
+
+		return function cleanup() {
+			observer.disconnect()
+		}
+	}, [])
+
 	return (
 		<Styled.Container>
 			<Styled.Description>
@@ -57,11 +93,7 @@ function Description() {
 						</Styled.Property>
 					))}
 				</Styled.PropertyList>
-				<Styled.PropertyValue>
-					{!_.isNil(propertyValue)
-						? `${currentProperty.property}: ${propertyValue}`
-						: ''}
-				</Styled.PropertyValue>
+				<Styled.PropertyValue>{PropertyValueComponent}</Styled.PropertyValue>
 				<Styled.Content>
 					<Markdown markdown={currentProperty.description} />
 				</Styled.Content>
