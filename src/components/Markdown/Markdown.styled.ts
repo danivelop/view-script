@@ -21,7 +21,7 @@ export const Break = styled.hr`
 
 export const Blockquote = styled.blockquote`
 	padding-left: 16px;
-	margin: 0;
+	margin: 20px 0;
 	color: #6a737d;
 	border-left: 0.25em solid #dfe2e5;
 `
@@ -34,4 +34,9 @@ export const Code = styled.pre`
 
 export const CodeIn = styled.code`
 	background-color: transparent;
+`
+
+export const Paragraph = styled.p`
+	margin: 6px 0;
+	letter-spacing: 0.8px;
 `

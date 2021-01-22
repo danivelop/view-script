@@ -33,6 +33,9 @@ const renderers = {
 			<Styled.CodeIn>{value}</Styled.CodeIn>
 		</Styled.Code>
 	),
+	paragraph: ({ children }: RendererProps) => (
+		<Styled.Paragraph>{children}</Styled.Paragraph>
+	),
 }
 
 function Markdown({ markdown }: MarkdownProps) {

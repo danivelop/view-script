@@ -32,6 +32,15 @@ function Description() {
 	useEffect(() => {
 		const value = getEventPropertyValue(currentProperty.property, layoutRef)
 		setPropertyValue(value)
+
+		const interval = setInterval(() => {
+			const value = getEventPropertyValue(currentProperty.property, layoutRef)
+			setPropertyValue(value)
+		}, 500)
+
+		return function cleanup() {
+			clearInterval(interval)
+		}
 	}, [currentProperty.property])
 
 	return (
@@ -58,10 +67,7 @@ function Description() {
 				</Styled.Content>
 			</Styled.Description>
 			<Styled.Layout>
-				<Layout
-					onUpdate={handleUpdate}
-					ref={layoutRef}
-				/>
+				<Layout onUpdate={handleUpdate} ref={layoutRef} />
 			</Styled.Layout>
 		</Styled.Container>
 	)
